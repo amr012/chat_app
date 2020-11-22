@@ -10,9 +10,18 @@ class RegistrationScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance;
+  TextEditingController _userNameController;
+  TextEditingController _passwordController;
  String userName;
  String password;
  bool showSpinner = false ;
+
+ @override
+  void initState() {
+    super.initState();
+    _userNameController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,6 +33,7 @@ class _LoginScreenState extends State<RegistrationScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
+                controller: _userNameController,
                 onChanged: (value) {
                   print(value);
                   userName = value;
@@ -42,6 +52,7 @@ class _LoginScreenState extends State<RegistrationScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
+                controller: _passwordController,
                 obscureText: true,
                 onChanged: (value) {
                   print(value);
@@ -71,9 +82,15 @@ class _LoginScreenState extends State<RegistrationScreen> {
                     setState(() {
                       showSpinner = true ;
                     });
+                 try{
                   final newUser = await _auth.createUserWithEmailAndPassword(email: userName, password: password);
                   if(newUser != null){
                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>ChatScreen()));
+                   _userNameController.clear();
+                   _passwordController.clear();
+                  }}
+                  catch(e){
+                   print(e);
                   }
                    setState(() {
                      showSpinner = false;
