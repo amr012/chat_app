@@ -25,6 +25,7 @@ class _LoginScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title:Text( "Registiration"),),
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
         child: Column(

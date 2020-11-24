@@ -16,7 +16,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
  void getCurrentUser() async {
     try{
-  final user = await _auth.currentUser;
+  User user = await _auth.currentUser;
   if(user != null){
     loggedUser = user ;
     print(loggedUser.email);
@@ -75,7 +75,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     onPressed: () async {
                      await _fireStore.collection("messages").add(
-                       {"message" : message , "sender" : _auth.currentUser.email}
+                       {"message" : message , "sender" : loggedUser.email}
                      );
                      print("send");
                     },
