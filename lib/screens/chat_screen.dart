@@ -23,6 +23,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }}catch(e){
       print(e);
     }
+
+
   }
   @override
   void initState() {
@@ -39,15 +41,36 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
               icon: Icon(Icons.close),
               onPressed: () {
-                _auth.signOut();
+                // _auth.signOut();
+                // Navigator.pop(context);
+                getStream();
+                print(">>>>>>>>>>>"); 
 
-                Navigator.pop(context);
               })
         ],
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
         children: [
+          StreamBuilder<QuerySnapshot>(stream: _fireStore.collection("messages").snapshots(),
+            builder: (context , snapshot){
+               if(snapshot.hasData){
+                 final messages = snapshot.data.docs;
+                 List<Text> messageWidgets = [];
+                 for(var message in messages ){
+                   final messageText = message.data();
+                   // final messageSender = message.data();
+                   final sender = messageText["sender"];
+                   final msg    =messageText["message"];
+
+                   final messageWidget = Text("$msg from $sender");
+                   messageWidgets.add(messageWidget);
+                 }
+                 return ListView(children: messageWidgets,);
+               }
+            },
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 6),
             child: Container(
@@ -87,5 +110,20 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> getMessages() async {
+    final messages = await _fireStore.collection("messages").get();
+    for(var message in messages.docs){
+      print(message.data());
+    }
+  }
+
+  Future<void> getStream() async {
+   await  for (var snapshot in _fireStore.collection("messages").snapshots()){
+     for (var message in snapshot.docs){
+       print(message.data());
+     }
+    }
   }
 }
